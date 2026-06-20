@@ -1,0 +1,24 @@
+data_directories:
+  raw_dir: "data/raw"
+  processed_dir : "data/processed"
+  features_dir: "data/features"
+
+transcripts_data:
+  dataset_repo: "kurry/sp500_earnings_transcripts"
+  tickers: ["AAPL", "MSFT"]
+  start_year: 2020
+  end_year: 2025
+
+transcripts_processing:
+  max_seq_length: 512
+  stride: 50
+  target_speakers:
+    - "Chief Executive Officer"
+    - "Chief Financial Officer"
+    - "CEO"
+    - "CFO"
+
+nlp_model:
+  hf_id: "yiyanghkust/finbert-tone"
+  batch_size: 16
+  decvice: "cpu"
