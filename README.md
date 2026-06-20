@@ -1,12 +1,19 @@
-## Overview
-This repository contains an automated Natural Language Processing (NLP) pipeline designed to extract quantitative alpha signals and risk indicators from SEC 10-K filings. The system utilizes FinBERT for domain-specific sentiment analysis, processing raw regulatory text into structured, high-frequency metrics suitable for integration into quantitative equity strategies and portfolio risk models.
+# Earnings Call NLP Processing Pipeline
 
-The architecture is modular, separating data acquisition, text normalization, machine learning inference, and signal generation into distinct operational phases.
+## Description
+A data engineering pipeline designed to ingest, process, and structure financial earnings transcripts for sentiment analysis via FinBERT. The system extracts transcripts from a Hugging Face repository, isolates the unscripted Q&A sessions, dynamically filters for executive responses to prevent analyst signal contamination, and applies sliding-window token chunking via LangChain to satisfy the strict 512-token input limit of BERT-based transformer architectures.
 
-### Pipeline Architecture
-
-* **Ingestion Engine:** Interfaces with the SEC EDGAR API to systematically retrieve 10-K filings based on target Central Index Keys (CIKs). Implements explicit rate-limiting and compliant user-agent declaration to adhere to SEC automated scraping protocols.
-* **Text Preprocessing & Extraction:** Parses raw HTML and text filings to isolate high-value sections, specifically Item 7 (Management's Discussion and Analysis) and Item 1A (Risk Factors). Executes HTML stripping, boilerplate removal, and sentence-level tokenization optimized for FinBERT's maximum context window constraint (512 tokens).
-* **FinBERT Inference Layer:** Executes batch inference utilizing pre-trained financial language models. Calculates discrete sentiment probabilities (positive, negative, neutral) at the sentence level across extracted regulatory sections. Includes dynamic padding and hardware acceleration routing.
-* **Analytics & Signal Generation:** Aggregates sentence-level probabilities into document- and section-level sentiment metrics. Computes year-over-year semantic drift and structural variation indices to quantify shifts in corporate disclosure language.
-* **Data Persistence:** Exports structured, time-stamped alpha factors and metadata (CIK, fiscal year, sentiment distributions, discrepancy scores) to a target database or flat file architecture for quantitative backtesting consumption.
+## Directory Structure
+.
+├── config/
+│   └── config.yaml             # Pipeline configuration (equity universe, bounds, I/O paths)
+├── data/
+│   ├── raw/                    # Immutable cache of Hugging Face dataset shards
+│   ├── processed/              # Intermediate state: Filtered universe transcripts
+│   └── features/               # Tensor-ready state: Chunked, token-bounded executive text
+├── src/
+│   ├── data_loader.py          # Network ingestion, caching, and vectorized Pandas filtering
+│   ├── text_processor.py       # Dynamic executive speaker resolution and NLTK/LangChain chunking
+│   └── utils/
+│       └── logger.py           # Standardized execution logging
+└── main.py                     # Pipeline orchestrator and state materialization management
