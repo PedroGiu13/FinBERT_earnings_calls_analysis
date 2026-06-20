@@ -1,0 +1,60 @@
+# ================================
+# Actual .gitignore
+# ================================
+*.env
+*.vscode/
+
+
+# ================================
+# Python
+# ================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.so
+*.egg
+*.egg-info/
+.eggs/
+MANIFEST
+*.whl
+
+# ================================
+# Virtual environments
+# ================================
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ================================
+# Type checking & linting
+# ================================
+.mypy_cache/
+.dmypy.json
+.ruff_cache/
+
+# ================================
+# Jupyter
+# ================================
+!notebooks/.gitkeep
+*.ipynb
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ================================
+# Data
+# ================================
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+*.csv
+*.parquet
+*.feather
+*.pkl
+*.h5
+*.hdf5
+*.zip
+*.tar.gz
