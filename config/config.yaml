@@ -4,11 +4,11 @@ data_directories:
   features_dir: "data/features"
   signals_dir: "data/signals"
 
-transcripts_data:
-  dataset_repo: "kurry/sp500_earnings_transcripts"
+ingestion_data:
+  transcript_repo: "kurry/sp500_earnings_transcripts"
   tickers: ["AAPL", "MSFT"]
-  start_year: 2020
-  end_year: 2025
+  start_date: "2020-01-01"
+  end_date: "2025-12-31"
 
 transcripts_processing:
   max_seq_length: 512
