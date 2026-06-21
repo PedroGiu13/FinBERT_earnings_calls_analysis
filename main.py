@@ -9,7 +9,9 @@ from src.data_loader import (
     fetch_transcript_data,
     filter_transcript_universe,
 )
+from src.evaluation import evaluate_alpha_factors
 from src.inference_model import execute_finbert_inference
+from src.price_processing import compute_ticker_returns
 from src.text_processor import process_structured_content
 from src.utils.logger import get_logger
 
@@ -31,6 +33,7 @@ def main():
     processed_dir = data_config.get("processed_dir")
     features_dir = data_config.get("features_dir")
     signals_dir = data_config.get("signals_dir")
+    output_dir = data_config.get("output_dir")
 
     ingestion_data = config.get("ingestion_data", {})
     repo_id = ingestion_data.get("transcripts_repo")
@@ -72,9 +75,7 @@ def main():
             output_file_path=Path(transcript_processed_file_path),
         )
 
-    print(df_transcripts_clean.head())
-
-    # ===== Transcripts =====
+    # ===== Tickers =====
     # Setup raw and processed file path
     raw_ticker_file_name = "yfinance/raw_ticker_prices.parquet"
     ticker_raw_file_path = Path(raw_dir) / raw_ticker_file_name
@@ -92,7 +93,20 @@ def main():
             output_file_path=ticker_raw_file_path,
         )
 
-    print(df_tickers_raw.head())
+    ticker_processed_file_path = Path(processed_dir) / "processed_prices.parquet"
+
+    if ticker_processed_file_path.exists():
+        logger.warning("Ticker returns already computed. Bypassing ticker prosessing")
+        df_tickers_processed = pd.read_parquet(
+            ticker_processed_file_path,
+            engine="pyarrow",  # type: ignore
+        )
+
+    else:
+        logger.info("Processing ticker closing prices and computing returns")
+        df_tickers_processed = compute_ticker_returns(
+            df_raw=df_tickers_raw, output_file_path=ticker_processed_file_path
+        )
 
     # 2. Text Processing pipeline
     logger.info("Starting Q&A text processing")
@@ -112,8 +126,6 @@ def main():
             df=df_transcripts_clean, output_file_path=features_file_path
         )
 
-    print(feature_matrix.head())
-
     # 3. Inference and alpha generation
     logger.info("Starting FinBERT Inference Engine")
 
@@ -131,7 +143,29 @@ def main():
             batch_size=batch_size,
         )
 
-    print(df_signals.head())
+    # 4. Evaluate Alpha Factors
+    logger.info("Starting statisticall Alpha Evaluation")
+
+    eval_output_dir = Path(output_dir)
+    eval_files = list(eval_output_dir.glob("*.parquet"))
+
+    if eval_files:
+        eval_dataframes = {}
+        for file in eval_files:
+            eval_dataframes[file.stem] = pd.read_parquet(file)
+
+        df_merged = eval_dataframes["alpha_factors"]
+        # df_ic = eval_dataframes['spearman_ic']
+        # df_quantile = eval_dataframes['quantile_analysis']
+
+    else:
+        df_merged = evaluate_alpha_factors(
+            df_signals=df_signals,
+            df_returns=df_tickers_processed,
+            output_path=eval_output_dir,
+        )
+
+    print(df_merged.head())
 
 
 if __name__ == "__main__":
