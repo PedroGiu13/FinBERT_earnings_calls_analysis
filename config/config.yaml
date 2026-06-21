@@ -3,12 +3,34 @@ data_directories:
   processed_dir : "data/processed"
   features_dir: "data/features"
   signals_dir: "data/signals"
+  output_dir: 'output'
 
 ingestion_data:
-  transcript_repo: "kurry/sp500_earnings_transcripts"
-  tickers: ["AAPL", "MSFT"]
-  start_date: "2020-01-01"
-  end_date: "2025-12-31"
+  transcripts_repo: "kurry/sp500_earnings_transcripts"
+  tickers: [
+    # Information Technology
+    "AAPL", "MSFT", "NVDA", "ORCL", "ADBE", "CSCO",
+    # Health Care
+    "JNJ", "PFE", "UNH", "ABBV", "MRK",
+    # Financials
+    "JPM", "BAC", "GS", "WFC", "AXP",
+    # Consumer Discretionary
+    "AMZN", "HD", "NKE", "MCD", "SBUX",
+    # Industrials
+    "GE", "BA", "CAT", "HON", "UPS",
+    # Communication Services
+    "GOOGL", "META", "DIS", "VZ", "T",
+    # Consumer Staples
+    "PG", "KO", "PEP", "WMT", "COST",
+    # Energy
+    "XOM", "CVX", "COP",
+    # Utilities
+    "NEE", "DUK", "SO",
+    # Real Estate / Materials
+    "PSA", "LIN", "FCX"
+  ]
+  start_date: "2008-01-01"
+  end_date: "2024-12-31"
 
 transcripts_processing:
   max_seq_length: 512
