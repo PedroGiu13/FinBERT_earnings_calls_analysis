@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, cast
 
 import pandas as pd
+import yfinance as yf
 from datasets import load_dataset
 
 from src.utils.logger import get_logger
@@ -10,7 +11,7 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-def fetch_data(repo_id: str, output_path: str) -> pd.DataFrame:
+def fetch_transcript_data(repo_id: str, output_path: str) -> pd.DataFrame:
     """
     Downloads or retrieves from local cache the Hugging Face dataset, optimizes memory by stripping unneeded columns, and returns a Pandas DataFrame.
     """
@@ -35,7 +36,7 @@ def fetch_data(repo_id: str, output_path: str) -> pd.DataFrame:
         raise
 
 
-def filter_universe(
+def filter_transcript_universe(
     df: pd.DataFrame,
     tickers: List[str],
     start_year: int,
@@ -58,3 +59,51 @@ def filter_universe(
     logger.info(f"File saved to {output_file_path}")
 
     return df_clean
+
+
+def fetch_ticker_data(
+    tickers: List[str], start_date: str, end_date: str, output_file_path: Path
+) -> pd.DataFrame:
+    """Function data retreives the daily adjusted closing price of a given ticker universe from yahoo finance.
+
+    Args:
+        tickers (list[str]): universe of tickers to fetch.
+        start_date (str): start data in 'YYYY-MM-DD' format.
+        end_date (str): end data in 'YYYY-MM-DD' format.
+    Returns:
+        pd.DataFrame: df with tickers as columns and date as index
+    """
+
+    output_file_path.parent.mkdir(exist_ok=True, parents=True)
+
+    # Fetch Data
+    try:
+        data = yf.download(
+            tickers=tickers,
+            start=start_date,
+            end=end_date,
+            auto_adjust=True,
+            progress=False,
+        )
+
+        # Check if response is empty
+        if data is None or data.empty:
+            logger.warning("Empty response from yfinance")
+            raise
+
+        # Get only the daily adjusted closing price
+        df = data["Close"]
+
+        # Fallback if only one ticker is fetched
+        if isinstance(df, pd.Series):
+            df = df.to_frame(tickers[0])
+
+        # Save data
+        df.to_parquet(output_file_path, engine="pyarrow", compression="snappy")
+        logger.info(f"Ticker data succesfully saved: {output_file_path}")
+
+    except Exception as e:
+        logger.error(f"Failed to fetch yfinance data: {e}")
+        raise
+
+    return df
