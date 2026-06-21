@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Tuple
 
 import pandas as pd
 import torch
@@ -68,7 +68,7 @@ def execute_finbert_inference(
     for i in tqdm(range(0, len(text_list), batch_size), desc="FinBERT Inference"):
         batch_text = text_list[i : i + batch_size]
 
-        inputs: Any = tokenizer(
+        inputs = tokenizer(
             batch_text,
             truncation=True,
             padding=True,
