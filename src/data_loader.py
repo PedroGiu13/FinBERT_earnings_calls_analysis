@@ -55,6 +55,9 @@ def filter_transcript_universe(
     if len(df_clean) == 0:
         raise ValueError("Empty dataframe")
 
+    # Standardise date
+    df_clean["date"] = pd.to_datetime(df["date"]).dt.normalize()
+
     df_clean.to_parquet(output_file_path, engine="pyarrow", compression="snappy")
     logger.info(f"File saved to {output_file_path}")
 
