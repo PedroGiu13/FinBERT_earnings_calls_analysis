@@ -2,6 +2,7 @@ data_directories:
   raw_dir: "data/raw"
   processed_dir : "data/processed"
   features_dir: "data/features"
+  signals_dir: "data/signals"
 
 transcripts_data:
   dataset_repo: "kurry/sp500_earnings_transcripts"
@@ -12,13 +13,7 @@ transcripts_data:
 transcripts_processing:
   max_seq_length: 512
   stride: 50
-  target_speakers:
-    - "Chief Executive Officer"
-    - "Chief Financial Officer"
-    - "CEO"
-    - "CFO"
 
 nlp_model:
-  hf_id: "yiyanghkust/finbert-tone"
+  hf_model_id: "yiyanghkust/finbert-tone"
   batch_size: 16
-  decvice: "cpu"
