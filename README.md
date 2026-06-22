@@ -43,6 +43,8 @@ Earnings Transcripts (HuggingFace)          yfinance (Equity Prices)
 ```
 ├── config/
 │   └── config.yaml              # Tickers, date range, model & directory config
+├── data/
+├── output/
 ├── src/
 │   ├── data_loader.py           # Transcript & ticker ingestion
 │   ├── text_processor.py        # Text chunking and cleaning
