@@ -137,13 +137,3 @@ so re-runs only execute missing steps.
 - **Code Quality:** `pre-commit` hooks (ruff, black, isort)
 
 ***
-
-## Limitations & Extensions
-
-- Signal is tested on a defined ticker universe; broader coverage would improve IC stability.
-- No transaction cost or turnover modelling — IC-based evaluation is a necessary but not
-  sufficient condition for tradability.
-- Potential extensions: sector-neutralised IC, combining with earnings surprise (SUE) factor,
-  fine-tuning FinBERT on proprietary call data.
-
-***
