@@ -155,8 +155,8 @@ def main():
             eval_dataframes[file.stem] = pd.read_parquet(file)
 
         df_merged = eval_dataframes["alpha_factors"]
-        # df_ic = eval_dataframes['spearman_ic']
-        # df_quantile = eval_dataframes['quantile_analysis']
+        df_ic = eval_dataframes["spearman_ic"]
+        df_quantile = eval_dataframes["quantile_analysis"]
 
     else:
         df_merged = evaluate_alpha_factors(

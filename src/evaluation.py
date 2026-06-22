@@ -37,13 +37,13 @@ def _compute_ic(df: pd.DataFrame) -> pd.DataFrame:
 
         if n_periods < 2:
             logger.warning(f"Not enough periods with valid IC for {ret_col}")
-            ic_mean = ic_std = icir = np.nan
+            ic_mean = ic_std = icir = t_stat = np.nan
 
         else:
             ic_mean = period_ics.mean()
             ic_std = period_ics.std(ddof=1)
             icir = ic_mean / ic_std if ic_std > 0 else np.nan
-            t_stat = ic_mean / (ic_std - np.sqrt(n_periods)) if ic_std > 0 else np.nan
+            t_stat = ic_mean / (ic_std / np.sqrt(n_periods)) if ic_std > 0 else np.nan
 
         ic_results.append(
             {
