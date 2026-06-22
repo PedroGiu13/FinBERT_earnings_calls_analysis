@@ -1,6 +1,6 @@
 # FinBERT Earnings Calls Sentiment — Alpha Signal Research
 
-A production-structured NLP pipeline that applies **FinBERT** to earnings call transcripts to generate cross-sectional sentiment alpha signals, evaluated against short- and medium-term equity returns.
+A production-structured NLP pipeline that applies FinBERT to earnings call transcripts to generate cross-sectional sentiment alpha signals, evaluated against short- and medium-term equity returns.
 
 ***
 
